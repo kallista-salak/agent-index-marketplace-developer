@@ -149,9 +149,10 @@ else
   pf_fail=0
   for n in "${ORDER[@]}"; do
     p="${PATHS[$n]}"
-    if [ ! -f "$p/collection.json" ]; then
-      echo "  $n: no collection.json (adapter or catalog repo) -- preflight not applicable, skipped"; continue
+    if [ ! -f "$p/collection.json" ] && [ ! -f "$p/adapter.json" ]; then
+      echo "  $n: no collection.json or adapter.json (catalog repo) -- preflight not applicable, skipped"; continue
     fi
+    # adapter repos (adapter.json) run in preflight-cli's adapter mode (DC-001)
     # Same invocation release-prep uses, plus --channel: a sibling NOT in this manifest (partial re-stage)
     # may be back on main; Check 12 then reads its version from origin/$BR (bug 20261008-8d20ea22-195439-2ca6).
     if ! bash "$PREFLIGHT" --collection "$p" --channel "$CH" >/tmp/pf.$$ 2>&1; then
